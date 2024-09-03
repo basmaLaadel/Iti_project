@@ -1,0 +1,87 @@
+{% extends "main/components/base.html" %}
+
+{% block title %}
+Index Page
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between mb-4">
+    <h1 class="display-4">Task Management</h1>
+    <div>
+      <a href="{% url 'createtodo' %}" class="btn btn-success me-2">Create New Task</a>
+      <a href="{% url 'createcategory' %}" class="btn btn-success">Create new Category</a>
+    </div>
+  </div>
+
+  <!-- Categories Section -->
+  <div class="row mb-4">
+    {% for cat in categories %}
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">{{ cat.name }}</h5>
+            <p class="card-text">{{ cat.description }}</p>
+            <a href="{% url 'cattodo' cat.id %}" class="btn btn-outline-info">View all Details</a>
+          </div>
+          <div class="card-footer text-muted">
+            {{ cat.tasks_count }} Tasks
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          No categories available.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  
+  <div class="row">
+    {% for task in tasks %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ task.title }}</h5>
+            <p class="card-text">{{ task.description }}</p>
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'detail' task.id %}" class="btn btn-primary">View Details</a>
+              <a href="{% url 'update-task' task.id %}" class="btn btn-warning">Update Task</a>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ task.id }}">
+                Delete Task
+              </button>
+            </div>
+          </div>
+
+          <!-- Delete Modal -->
+          <div class="modal fade" id="deleteModal{{ task.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel{{ task.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel{{ task.id }}">Confirm Deletion</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete the task "{{ task.title }}"? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <a href="{% url 'delete-task' task.id %}" class="btn btn-danger">Confirm Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info" role="alert">
+          No tasks available.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
